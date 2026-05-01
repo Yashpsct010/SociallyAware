@@ -3,7 +3,8 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Allow CORS for the frontend domain
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
+  const origin = req.headers.origin || process.env.FRONTEND_URL || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
