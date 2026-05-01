@@ -1,0 +1,28 @@
+{
+  "name": "SociallyAware",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "autoprefixer": "^10.5.0",
+    "framer-motion": "^12.38.0",
+    "i18next": "^26.0.8",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "lucide-react": "^1.14.0",
+    "postcss": "^8.5.12",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-i18next": "^17.0.6",
+    "react-router": "^7.14.2",
+    "react-router-dom": "^7.14.2",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vue/compiler-sfc": "^3.0.4",
+    "vite": "^8.0.10"
+  }
+}
