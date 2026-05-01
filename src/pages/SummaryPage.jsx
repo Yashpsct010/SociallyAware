@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { useJourney } from '../context/JourneyContext';
-import { CheckCircle, MapPin, FileText, Share2 } from 'lucide-react';
+import { CheckCircle, MapPin, FileText, Share2, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { TermTooltip } from '../components/ui/TermTooltip';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ export function SummaryPage() {
   const navigate = useNavigate();
   const { journeyData, resetJourney } = useJourney();
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [isCopied, setIsCopied] = useState(false);
   const { t } = useTranslation();
 
   const toggleTask = (id) => {
@@ -20,6 +21,25 @@ export function SummaryPage() {
   const handleStartOver = () => {
     resetJourney();
     navigate('/');
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: 'My Indian Election Journey',
+      text: 'I just completed my personalized voting readiness checklist for the Indian Elections! Check it out and get ready to vote.',
+      url: window.location.origin,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 3000);
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
   };
 
   const timelineItems = [
@@ -60,60 +80,87 @@ export function SummaryPage() {
 
   return (
     <div className="flex flex-col w-full pb-10">
-      <div className="mb-10 text-center">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="w-20 h-20 bg-blue-100 text-primary rounded-full flex flex-col items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg"
-        >
-          <span className="text-2xl font-black">{score}%</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">{t('summary.heading')}</h2>
-        <p className="text-gray-600 text-lg">{t('summary.subtitle')}</p>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-claude bg-surface-raised border border-surface-border flex items-center justify-center">
+            <span className="text-base font-bold text-ink">{score}%</span>
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold text-ink tracking-tight">{t('summary.heading')}</h2>
+            <p className="text-ink-muted text-sm">{t('summary.subtitle')}</p>
+          </div>
+        </div>
+        {/* Score bar */}
+        <div className="w-full bg-surface-border h-[2px] rounded-full">
+          <motion.div
+            className="bg-primary h-[2px] rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${score}%` }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          />
+        </div>
       </div>
 
-      <div className="space-y-4 mb-12">
+      {/* Checklist */}
+      <div className="space-y-2 mb-10">
         {timelineItems.map((item, index) => {
           const isDone = completedTasks.includes(item.id);
+          const Icon = item.icon;
           return (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.08 }}
               key={item.id}
-              className={`p-4 md:p-6 rounded-xl border-2 transition-all cursor-pointer flex gap-4 ${isDone ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white hover:border-blue-300'}`}
+              className={`p-4 rounded-claude border transition-all cursor-pointer flex gap-3 group ${
+                isDone
+                  ? 'border-surface-border bg-surface-raised opacity-70'
+                  : 'border-surface-border bg-white hover:border-ink-faint'
+              }`}
               onClick={() => toggleTask(item.id)}
             >
-              <div className={`mt-1 flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center ${isDone ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300 text-transparent'}`}>
-                <CheckCircle size={20} />
+              {/* Checkbox */}
+              <div className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center mt-0.5 transition-all ${
+                isDone ? 'border-primary bg-primary text-white' : 'border-surface-border group-hover:border-ink-faint'
+              }`}>
+                {isDone && <CheckCircle size={12} strokeWidth={2.5} />}
               </div>
-              <div>
-                <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 mb-1">
-                  <span className={`font-bold text-sm uppercase tracking-wider ${isDone ? 'text-green-600' : 'text-primary-dark'}`}>{item.date}</span>
-                  <h3 className={`text-xl font-bold ${isDone ? 'text-gray-500 line-through' : 'text-gray-900'}`}>{item.title}</h3>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-xs font-medium text-ink-faint uppercase tracking-wider">{item.date}</span>
                 </div>
-                <p className={`text-sm md:text-base ${isDone ? 'text-gray-500' : 'text-gray-700'}`}>{item.description}</p>
+                <h3 className={`text-sm font-semibold ${isDone ? 'text-ink-faint line-through' : 'text-ink'}`}>{item.title}</h3>
+                <p className="text-xs text-ink-muted leading-relaxed mt-0.5">{item.description}</p>
+              </div>
+              <div className={`flex-shrink-0 p-1.5 rounded-lg self-start mt-0.5 ${isDone ? 'text-ink-faint' : 'text-ink-faint'}`}>
+                <Icon size={13} />
               </div>
             </motion.div>
           );
         })}
       </div>
 
+      {/* Celebration */}
       {score === 100 && (
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.96, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-primary text-white p-6 rounded-xl text-center mb-8 shadow-xl"
+          className="bg-primary/8 border border-primary/20 text-ink p-4 rounded-claude text-sm mb-6"
         >
-          <h3 className="text-2xl font-bold mb-2">{t('summary.celebration_title')}</h3>
-          <p>{t('summary.celebration_text')} <TermTooltip term={t('summary.elections')} query="Elections_in_India" /> {t('summary.celebration_end')}</p>
+          <span className="font-semibold text-primary">{t('summary.celebration_title')}</span>{' '}
+          {t('summary.celebration_text')} <TermTooltip term={t('summary.elections')} query="Elections_in_India" /> {t('summary.celebration_end')}
         </motion.div>
       )}
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-auto">
-        <Button variant="outline" onClick={handleStartOver} className="w-full sm:w-auto">{t('summary.btn_restart')}</Button>
-        <Button variant="primary" className="w-full sm:w-auto flex items-center justify-center gap-2">
-          {t('summary.btn_share')} <Share2 size={18} />
+      {/* Actions */}
+      <div className="flex items-center gap-3 mt-auto pt-6 border-t border-surface-border">
+        <Button variant="outline" onClick={handleStartOver} className="flex items-center gap-1.5">
+          <RotateCcw size={13} /> {t('summary.btn_restart')}
+        </Button>
+        <Button variant="primary" onClick={handleShare} className="flex items-center gap-1.5">
+          <Share2 size={13} />
+          {isCopied ? 'Copied!' : t('summary.btn_share')}
         </Button>
       </div>
     </div>

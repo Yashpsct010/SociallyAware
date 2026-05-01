@@ -30,14 +30,14 @@ export function RegistrationStep() {
   const renderSubtitle = () => {
     if (journeyData.persona === 'nri') {
       return (
-        <span className="text-primary-dark bg-blue-50 px-2 py-1 rounded">
+        <span className="inline-block mt-2 px-2.5 py-1.5 bg-primary/8 text-primary border border-primary/20 rounded-claude text-xs font-medium">
           {t('registration.subtitle_nri')} <strong>{t('registration.subtitle_nri_form')}</strong> {t('registration.subtitle_nri_end')}
         </span>
       );
     }
     if (journeyData.persona === 'first_time') {
       return (
-        <span className="text-primary-dark bg-blue-50 px-2 py-1 rounded">
+        <span className="inline-block mt-2 px-2.5 py-1.5 bg-primary/8 text-primary border border-primary/20 rounded-claude text-xs font-medium">
           {t('registration.subtitle_first')} <strong>{t('registration.subtitle_first_form')}</strong> {t('registration.subtitle_first_mid')} <TermTooltip term={t('registration.epic')} query="Voter_ID_card_(India)" /> {t('registration.subtitle_first_end')}
         </span>
       );
@@ -49,20 +49,20 @@ export function RegistrationStep() {
     <div className="flex flex-col w-full">
       <StepIndicator currentStep={3} totalSteps={5} />
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+        <h2 className="text-2xl font-semibold text-ink mb-2 tracking-tight">
           {t('registration.heading')} <TermTooltip term={t('registration.electoral_roll')} query="Electoral_roll" />?
         </h2>
-        <p className="text-gray-600 text-lg">{renderSubtitle()}</p>
+        <p className="text-ink-muted text-sm leading-relaxed">{renderSubtitle()}</p>
       </div>
-      <div className="space-y-4 mb-10">
+      <div className="space-y-2.5 mb-10">
         {options.map((option) => (
           <OptionCard key={option.id} title={option.title} description={option.description} icon={option.icon} isSelected={selectedStatus === option.id} onClick={() => setSelectedStatus(option.id)} />
         ))}
       </div>
-      <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-100">
+      <div className="flex items-center justify-between mt-auto pt-6 border-t border-surface-border">
         <Button variant="outline" onClick={() => navigate('/step-2')}>{t('registration.btn_back')}</Button>
-        <Button variant="primary" onClick={handleNext} disabled={!selectedStatus} className={!selectedStatus ? 'opacity-50 cursor-not-allowed' : ''}>
-          {t('registration.btn_next')}
+        <Button variant="primary" onClick={handleNext} disabled={!selectedStatus}>
+          {t('registration.btn_next')} →
         </Button>
       </div>
     </div>

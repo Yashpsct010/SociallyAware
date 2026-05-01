@@ -2,16 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export function Button({ children, onClick, variant = 'primary', className = '', ...props }) {
-  const baseStyles = "inline-flex items-center justify-center px-6 py-3 border text-base font-medium rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const baseStyles = "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-claude transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/40 disabled:opacity-50";
   const variants = {
-    primary: "border-transparent text-white bg-primary hover:bg-primary-dark focus:ring-primary",
-    secondary: "border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-primary",
-    outline: "border-primary text-primary bg-transparent hover:bg-blue-50 focus:ring-primary"
+    primary: "bg-primary text-white hover:bg-primary-dark border border-primary-dark/20 shadow-warm",
+    secondary: "bg-surface-raised text-ink hover:bg-surface-border border border-surface-border shadow-warm",
+    outline: "bg-transparent text-ink-muted hover:text-ink hover:bg-surface-raised border border-surface-border",
   };
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={`${baseStyles} ${variants[variant]} ${className}`}
       onClick={onClick}

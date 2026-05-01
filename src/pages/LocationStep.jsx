@@ -33,19 +33,19 @@ export function LocationStep() {
     <div className="flex flex-col w-full">
       <StepIndicator currentStep={1} totalSteps={5} />
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">{t('location.heading')}</h2>
-        <p className="text-gray-600 text-lg">
+        <h2 className="text-2xl font-semibold text-ink mb-2 tracking-tight">{t('location.heading')}</h2>
+        <p className="text-ink-muted text-sm leading-relaxed">
           {t('location.subtitle')} <TermTooltip term={t('location.eci')} query="Election_Commission_of_India" />{t('location.subtitle_end')} <TermTooltip term={t('location.constituency')} query="Electoral_district" /> {t('location.constituency_end')}
         </p>
       </div>
-      <div className="mb-10 w-full max-w-md">
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('location.label')}</label>
+      <div className="mb-10 w-full max-w-sm">
+        <label className="block text-xs font-medium text-ink-faint mb-2 uppercase tracking-wider">{t('location.label')}</label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MapPin className="text-gray-400" size={20} />
+            <MapPin className="text-ink-faint" size={15} />
           </div>
           <select
-            className="block w-full pl-10 pr-3 py-4 text-base border-2 border-gray-200 focus:outline-none focus:ring-primary focus:border-primary sm:text-lg rounded-xl transition-colors appearance-none bg-white"
+            className="block w-full pl-9 pr-3 py-2.5 text-sm border border-surface-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 rounded-claude transition-all appearance-none bg-white text-ink"
             value={selectedState}
             onChange={(e) => setSelectedState(e.target.value)}
           >
@@ -56,10 +56,10 @@ export function LocationStep() {
           </select>
         </div>
       </div>
-      <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-100">
+      <div className="flex items-center justify-between mt-auto pt-6 border-t border-surface-border">
         <Button variant="outline" onClick={() => navigate('/')}>{t('location.btn_back')}</Button>
-        <Button variant="primary" onClick={handleNext} disabled={!selectedState} className={!selectedState ? 'opacity-50 cursor-not-allowed' : ''}>
-          {t('location.btn_next')}
+        <Button variant="primary" onClick={handleNext} disabled={!selectedState}>
+          {t('location.btn_next')} →
         </Button>
       </div>
     </div>

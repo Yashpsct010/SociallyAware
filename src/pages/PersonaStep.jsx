@@ -32,18 +32,18 @@ export function PersonaStep() {
     <div className="flex flex-col w-full">
       <StepIndicator currentStep={2} totalSteps={5} />
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">{t('persona.heading')}</h2>
-        <p className="text-gray-600 text-lg">{t('persona.subtitle')}</p>
+        <h2 className="text-2xl font-semibold text-ink mb-2 tracking-tight">{t('persona.heading')}</h2>
+        <p className="text-ink-muted text-sm leading-relaxed">{t('persona.subtitle')}</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+      <div className="grid grid-cols-1 gap-2.5 mb-10">
         {options.map((option) => (
           <OptionCard key={option.id} title={option.title} description={option.description} icon={option.icon} isSelected={selectedPersona === option.id} onClick={() => setSelectedPersona(option.id)} />
         ))}
       </div>
-      <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-100">
+      <div className="flex items-center justify-between mt-auto pt-6 border-t border-surface-border">
         <Button variant="outline" onClick={() => navigate('/step-1')}>{t('persona.btn_back')}</Button>
-        <Button variant="primary" onClick={handleNext} disabled={!selectedPersona} className={!selectedPersona ? 'opacity-50 cursor-not-allowed' : ''}>
-          {t('persona.btn_next')}
+        <Button variant="primary" onClick={handleNext} disabled={!selectedPersona}>
+          {t('persona.btn_next')} →
         </Button>
       </div>
     </div>
