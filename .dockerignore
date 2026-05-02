@@ -1,11 +1,12 @@
 # Dependencies
 node_modules/
+serverless/node_modules/
 npm-debug.log*
 
 # Build output
 dist/
 
-# Environment files - never bake secrets into images
+# Environment files
 .env
 .env.*
 !.env.example
@@ -14,3 +15,5 @@ dist/
 *.md
 .git/
 .gitignore
+Dockerfile
+nginx.conf

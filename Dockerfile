@@ -1,5 +1,5 @@
 # ---- Stage 1: Build Frontend ----
-FROM node:20-alpine AS frontend-builder
+FROM node:20 AS frontend-builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # ---- Stage 2: Build Backend & Final Image ----
-FROM node:20-alpine
+FROM node:20-slim
 WORKDIR /app
 
 # Copy backend package files
@@ -24,4 +24,5 @@ COPY --from=frontend-builder /app/dist ./dist
 ENV PORT=8080
 EXPOSE 8080
 
+# Start the server
 CMD ["node", "local-server.js"]
