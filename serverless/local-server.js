@@ -1,25 +1,34 @@
-require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+// Only load dotenv if we are NOT in production
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    require('dotenv').config();
+  } catch (e) {
+    console.log('No .env file found, skipping...');
+  }
+}
+
 const app = express();
 app.use(express.json());
 
-// --- Chat API Logic (Moved here for stability) ---
+// --- Health Check (Required by some cloud providers) ---
+app.get('/_health', (req, res) => res.status(200).send('OK'));
+
+// --- Chat API Logic ---
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, history } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
     
-    if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY missing' });
-    }
+    if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY missing' });
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use stable model name
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const systemPrompt = `You are an Election Expert for India. Only answer election/voting questions. Refuse others with: "I am an Election Expert assistant. I can only answer questions related to the Indian election process and voting procedures."`;
+    const systemPrompt = "You are an Indian Election Expert. Answer concisely.";
     const formattedHistory = (history || []).map(m => `${m.isBot ? 'Expert' : 'User'}: ${m.text}`).join('\n');
     const prompt = `${systemPrompt}\n\nChat History:\n${formattedHistory}\nUser: ${message}\nExpert:`;
 
@@ -28,22 +37,27 @@ app.post('/api/chat', async (req, res) => {
     res.json({ text: response.text() });
   } catch (error) {
     console.error('API Error:', error);
-    res.status(500).json({ error: 'Failed to generate response' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // --- Static File Serving ---
-const distPath = path.join(__dirname, 'dist');
+const distPath = path.resolve(__dirname, 'dist');
 app.use(express.static(distPath));
 
 // SPA Fallback
 app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'), (err) => {
-    if (err) res.status(404).send('Frontend not found');
+  const indexPath = path.join(distPath, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      // If we can't find index.html, don't crash, just send a 404
+      res.status(404).send(`Static assets not found at ${indexPath}`);
+    }
   });
 });
 
 const PORT = process.env.PORT || 8080;
+// Listen on all interfaces
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on 0.0.0.0:${PORT}`);
+  console.log(`Server successfully started on port ${PORT}`);
 });

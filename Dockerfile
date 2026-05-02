@@ -2,7 +2,8 @@
 FROM node:20 AS frontend-builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+# Use install instead of ci to be more flexible with lockfiles
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -11,18 +12,20 @@ FROM node:20-slim
 WORKDIR /app
 
 # Copy backend package files
-COPY serverless/package.json serverless/package-lock.json* ./
-RUN npm ci --omit=dev
+COPY serverless/package.json ./
+# Install only production dependencies
+RUN npm install --omit=dev
 
-# Copy backend source
+# Copy backend source (everything in serverless/)
 COPY serverless/ ./
 
-# Copy the built frontend from Stage 1 into the backend's dist folder
+# Copy the built frontend from Stage 1
 COPY --from=frontend-builder /app/dist ./dist
 
-# Cloud Run default port
+# Final sanity check: List files to logs so we can debug if it fails
+RUN ls -la && ls -la dist/
+
 ENV PORT=8080
 EXPOSE 8080
 
-# Start the server
 CMD ["node", "local-server.js"]
