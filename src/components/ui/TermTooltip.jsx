@@ -43,41 +43,46 @@ export function TermTooltip({ term, query = term, children }) {
 
   return (
     <span 
-      className="relative inline-flex items-center gap-1 text-primary-dark border-b border-dashed border-primary cursor-help mx-1"
+      className="relative inline-flex items-center gap-0.5 text-primary font-medium border-b border-dashed border-primary/40 cursor-help"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {children || term} <Info size={14} className="text-primary opacity-70" />
+      {children || term} <Info size={11} className="opacity-70" />
       
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 md:w-80 p-4 bg-white rounded-lg shadow-xl border border-gray-100 pointer-events-none text-left"
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-white rounded-claude shadow-warm-md border border-surface-border pointer-events-none text-left"
           >
             {loading ? (
               <div className="flex justify-center py-4">
-                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               </div>
             ) : data ? (
               <div>
-                <div className="flex gap-3 mb-2">
+                <div className="flex gap-2.5 mb-2 items-center">
                   {data.thumbnail && (
-                    <img src={data.thumbnail} alt={data.title} className="w-12 h-12 object-cover rounded-md" />
+                    <img src={data.thumbnail} alt={data.title} className="w-8 h-8 object-cover rounded" />
                   )}
-                  <h4 className="font-bold text-gray-900 text-base m-0">{data.title}</h4>
+                  <h4 className="font-semibold text-ink text-sm m-0">{data.title}</h4>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed m-0 line-clamp-4">
+                <p className="text-xs text-ink-muted leading-relaxed m-0">
                   {data.extract}
                 </p>
-                <div className="text-xs text-gray-400 mt-2 text-right">Source: Wikipedia</div>
+                <div className="text-[10px] text-ink-faint mt-2 pt-2 border-t border-surface-border flex justify-between items-center">
+                  <span>Wikipedia Reference</span>
+                  <span className="bg-surface px-1.5 py-0.5 rounded border border-surface-border uppercase tracking-widest text-[8px]">ECI Helper</span>
+                </div>
               </div>
             ) : null}
             
             {/* Tooltip Arrow */}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-8 border-transparent border-t-white" />
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-white" />
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-surface-border -z-10" />
           </motion.div>
         )}
       </AnimatePresence>
