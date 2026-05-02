@@ -37,7 +37,10 @@ app.post('/api/chat', async (req, res) => {
     res.json({ text: response.text() });
   } catch (error) {
     console.error('API Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ 
+      error: 'Failed to generate response',
+      details: error.message 
+    });
   }
 });
 
