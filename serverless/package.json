@@ -2,7 +2,7 @@
   "name": "serverless",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "local-server.js",
   "scripts": {
     "start": "node local-server.js",
     "dev": "node local-server.js",
@@ -13,9 +13,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   }
 }
