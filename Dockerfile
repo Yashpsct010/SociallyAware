@@ -1,34 +1,27 @@
-# ---- Stage 1: Build ----
-FROM node:20-alpine AS builder
-
+# ---- Stage 1: Build Frontend ----
+FROM node:20-alpine AS frontend-builder
 WORKDIR /app
-
-# Copy package files
 COPY package.json package-lock.json* ./
 RUN npm ci
-
-# Copy source
 COPY . .
-
-# Build args for env vars at build time
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-
 RUN npm run build
 
-# ---- Stage 2: Serve with nginx ----
-FROM nginx:stable-alpine
+# ---- Stage 2: Build Backend & Final Image ----
+FROM node:20-alpine
+WORKDIR /app
 
-# Remove default config
-RUN rm /etc/nginx/conf.d/default.conf
+# Copy backend package files
+COPY serverless/package.json serverless/package-lock.json* ./
+RUN npm ci --omit=dev
 
-# Copy our nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy backend source
+COPY serverless/ ./
 
-# Copy built assets from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copy the built frontend from Stage 1 into the backend's dist folder
+COPY --from=frontend-builder /app/dist ./dist
 
-# Cloud Run uses port 8080 by default
+# Cloud Run default port
+ENV PORT=8080
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "local-server.js"]

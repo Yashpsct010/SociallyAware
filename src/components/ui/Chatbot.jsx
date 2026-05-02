@@ -29,7 +29,7 @@ export function Chatbot() {
     setIsLoading(true);
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api/chat';
+      const backendUrl = '/api/chat';
       const res = await fetch(backendUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

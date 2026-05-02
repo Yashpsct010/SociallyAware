@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const chatHandler = require('./api/chat');
 
 const app = express();
@@ -7,13 +8,23 @@ const app = express();
 // Parse JSON bodies
 app.use(express.json());
 
-// Forward requests to the Vercel handler
-// Express req/res are compatible with Vercel's req/res for basic JSON body/status
+// 1. API Routes
 app.all('/api/chat', (req, res) => {
   chatHandler(req, res);
 });
 
-const PORT = process.env.PORT || 3000;
+// 2. Serve Static Files (The Frontend)
+// In production, the 'dist' folder will be copied into the backend directory
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath));
+
+// 3. SPA Fallback
+// For any route that isn't an API call, serve index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Local development server running on http://localhost:${PORT}`);
+  console.log(`Unified server running on port ${PORT}`);
 });
